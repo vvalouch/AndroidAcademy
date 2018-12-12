@@ -41,11 +41,11 @@ class MyAdapter(private val imageLoader: ImageLoader) :
     override fun getItemCount() = imageLoader.dataSet.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        uiScope.launch {
+        /*uiScope.launch {
             val bitmap = imageLoader.getBitmapBadWay(position)
             holder.imageView.setImageBitmap(bitmap)
-        }
+        }*/
 
-        //imageLoader.setBitmapPicasso(position, holder.imageView)
+        imageLoader.setBitmapPicasso(position, holder.imageView)
     }
 }

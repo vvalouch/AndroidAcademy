@@ -1,11 +1,9 @@
 package com.concur.test.imagetricks
 
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.graphics.Rect
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Transformation
@@ -26,7 +24,6 @@ class ImageLoader(private val context: Context) {
         "https://mikarchitect.files.wordpress.com/2010/07/cfw-chr-high-resolution.jpg",
         "https://phxarch.files.wordpress.com/2014/04/rappaport.jpg",
         "https://cdn.history.com/sites/2/2015/09/iStock_000038100826_Large.jpg"
-        /*
         ,"https://rwethereyetmom.com/wp-content/uploads/2016/04/DSC_0107_2.jpg",
         "https://www.worldfortravel.com/wp-content/uploads/2015/10/Arches-National-Park-Utah-US.jpg",
         "https://www.worldfortravel.com/wp-content/uploads/2015/04/Yellowstone-National-Park-US.jpg",
@@ -41,16 +38,58 @@ class ImageLoader(private val context: Context) {
         "https://images.freeimages.com/images/large-previews/43a/positure-ii-1170594.jpg",
         "https://images.freeimages.com/images/large-previews/525/pen-1311782.jpg",
         "https://images.freeimages.com/images/large-previews/209/pen-drive-1239890.jpg"
-        */
+
     )
 
     suspend fun getBitmapBadWay(position: Int): Bitmap? {
         var bitmap: Bitmap? = null
         withContext(Dispatchers.IO) {
-            URL(dataSet[position]).openStream().use { input ->
-                bitmap = BitmapFactory.decodeStream(input)
+            val file = File(context.cacheDir, "$position-${dataSet.hashCode()}.jpg")
+
+            if(!file.exists()){
+                URL(dataSet[position]).openStream().use { input ->
+                    FileOutputStream(file).buffered().use {
+                        it.write(input.readBytes())
+                    }
+                }
             }
+
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeFile(file.absolutePath, options)
+
+            val outHeight = options.outHeight
+            val outWidth = options.outWidth
+
+            val sampleSize = Math.max(outHeight, outWidth)/200
+            options.inSampleSize = sampleSize
+            options.inJustDecodeBounds = false
+            bitmap = BitmapFactory.decodeFile(file.absolutePath, options)
         }
         return bitmap
+    }
+
+    fun setBitmapPicasso(position: Int, imageView: ImageView){
+        Picasso.get().setIndicatorsEnabled(true)
+        Picasso.get()
+            .load(dataSet[position])
+            .placeholder(android.R.drawable.alert_dark_frame)
+            .transform(object:Transformation{
+                override fun key(): String {
+                    return dataSet[position]+"-200-200"
+                }
+
+                override fun transform(source: Bitmap?): Bitmap {
+                    val matrix = Matrix()
+                    matrix.preScale(0.5f, 0.5f)
+                    matrix.postRotate(90f)
+
+                    val out =  Bitmap.createBitmap(source, 0,0,source!!.width, source.height, matrix, true)
+                    source?.recycle()
+                    return out
+
+                }
+            })
+            .into(imageView);
     }
 }
