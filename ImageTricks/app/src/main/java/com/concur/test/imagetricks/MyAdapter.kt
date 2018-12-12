@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +21,12 @@ class MyAdapter(private val imageLoader: ImageLoader) :
 
     class MyViewHolder(val row: View) : RecyclerView.ViewHolder(row) {
         var imageView: ImageView
+        var textText:TextView
 
         init {
             imageView = row.findViewById(R.id.row_image)
+            textText = row.findViewById(R.id.row_text)
+
         }
     }
 
