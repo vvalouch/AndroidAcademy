@@ -21,12 +21,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        my_recyclerview.apply {
+        // 3.0 setup recycler view
+
+        /*my_recyclerview.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = myAdapter
-        }
+        }*/
 
-        //swipe to refresh
+
+        //4.0 enable swipe to refresh
         /*
         swipe_refresh_layout.setOnRefreshListener {
             loadItems()
@@ -34,7 +37,7 @@ class MainActivity : AppCompatActivity() {
          */
 
 
-        //swipe to delete
+        //5.0 enable swipe to delete
         /*
         ItemTouchHelper(object : SwipeToDeleteCallback(this@MainActivity) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -44,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         */
 
 
-        //Enables functionality for sending data to server
+        //6.0 Enables functionality for sending data to server
         /*
         my_add_button.setOnClickListener {
             networkClient.postNew(Post("123123123", "title", "body"), { showToast("post", it) })
@@ -52,12 +55,13 @@ class MainActivity : AppCompatActivity() {
         */
 
 
-        //Image download. The image is displayed on each row
+        //7.0 Image download. The image is displayed on each row
         //networkClient.downloadImage { myAdapter.image = it }
     }
 
     override fun onResume() {
         super.onResume()
+        //3.1 load items on start
         //loadItems()
     }
 
